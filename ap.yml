@@ -1,0 +1,182 @@
+openapi: 3.1.0
+info:
+  title: FireCode AI API
+  description: API for interacting with FireCode AI to analyze PDF and DWG files and generate compliance reports according to SBC and NFPA codes.
+  version: 1.0.0
+servers:
+  - url: https://api.firecodeai.com/v1
+    description: Main production server
+paths:
+  /analyze:
+    post:
+      summary: Analyze a file and generate a compliance report
+      description: Upload a PDF or DWG file to analyze it against the SBC and NFPA codes and generate a compliance report.
+      operationId: analyzeFile
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The file to be analyzed (PDF or DWG).
+                code:
+                  type: string
+                  description: The code standard to use for analysis (e.g., SBC, NFPA).
+                  enum:
+                    - SBC
+                    - NFPA
+              required:
+                - file
+                - code
+      responses:
+        "200":
+          description: Successful analysis and report generation.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reportId:
+                    type: string
+                    description: The ID of the generated report.
+                  status:
+                    type: string
+                    description: The status of the analysis (e.g., completed, in_progress).
+                  message:
+                    type: string
+                    description: Additional information about the analysis.
+        "400":
+          description: Bad request. Invalid file or code provided.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+        "401":
+          description: Unauthorized. Invalid or missing API key.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+
+  /report/{reportId}:
+    get:
+      summary: Get the generated compliance report
+      description: Retrieve the compliance report generated from the analysis.
+      operationId: getReport
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          description: The ID of the report to retrieve.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Successful retrieval of the report.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reportId:
+                    type: string
+                    description: The ID of the report.
+                  reportUrl:
+                    type: string
+                    description: The URL where the report can be downloaded.
+                  status:
+                    type: string
+                    description: The status of the report (e.g., available, processing).
+                  createdAt:
+                    type: string
+                    format: date-time
+                    description: The timestamp when the report was created.
+        "400":
+          description: Bad request. Invalid report ID provided.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+        "401":
+          description: Unauthorized. Invalid or missing API key.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+        "404":
+          description: Report not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+        "500":
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message.
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+security:
+  - ApiKeyAuth: []
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A.I.F.P-by-W.M.N-
+Artificial intelligence For Fire protection
